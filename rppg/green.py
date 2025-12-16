@@ -5,6 +5,7 @@ class GreenRPPG:
         self.fps = fps
         self.window = int(1.6 * fps)
         self.buffer = []
+        self.window = int(3.0 * fps)
 
     def update(self, roi_pixels):
         if roi_pixels.size == 0:
@@ -20,5 +21,6 @@ class GreenRPPG:
             self.buffer.pop(0)
 
         signal = np.array(self.buffer)
-        signal = (signal - signal.mean()) / (signal.std() + 1e-6)
+        signal = signal - np.mean(signal)
+        signal = signal / (np.std(signal) + 1e-6)
         return signal
