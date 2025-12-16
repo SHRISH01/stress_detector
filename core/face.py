@@ -5,6 +5,9 @@ import mediapipe as mp
 class FaceLandmarkDetector:
     def __init__(self):
         self.mp_face = mp.solutions.face_mesh
+        self.prev_landmarks = None
+        self.alpha = 0.7
+
         self.detector = self.mp_face.FaceMesh(
             static_image_mode=False,
             max_num_faces=1,
@@ -34,4 +37,15 @@ class FaceLandmarkDetector:
         x1, y1 = landmarks.min(axis=0)
         x2, y2 = landmarks.max(axis=0)
 
-        return landmarks, (x1, y1, x2, y2)
+        if self.prev_landmarks is None:
+            smooth_landmarks = landmarks
+        else:
+            smooth_landmarks = (
+                self.alpha * self.prev_landmarks +
+                (1 - self.alpha) * landmarks
+            )
+
+        self.prev_landmarks = smooth_landmarks
+        return smooth_landmarks.astype(int), (x1, y1, x2, y2)
+
+        # return landmarks, (x1, y1, x2, y2)
