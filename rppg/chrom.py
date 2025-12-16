@@ -1,32 +1,28 @@
 import numpy as np
 
-class CHROM:
-    def __init__(self, fps):
-        self.fps = fps
+
+class ChromRPPG:
+    def __init__(self):
         self.buffer = []
-        self.window_size = int(1.6 * fps)
 
     def update(self, roi_pixels):
-        if roi_pixels.size == 0:
+        if roi_pixels is None or len(roi_pixels) < 50:
             return None
 
-        mean_rgb = roi_pixels.mean(axis=0)
-        self.buffer.append(mean_rgb)
+        r = np.mean(roi_pixels[:, 2])
+        g = np.mean(roi_pixels[:, 1])
+        b = np.mean(roi_pixels[:, 0])
 
-        if len(self.buffer) < self.window_size:
-            return None
-
-        if len(self.buffer) > self.window_size:
-            self.buffer.pop(0)
-
+        self.buffer.append([r, g, b])
         rgb = np.array(self.buffer)
-        rgb = rgb / np.mean(rgb, axis=0)
 
-        r, g, b = rgb.T
+        if len(rgb) < 30:
+            return None
 
-        x = 3 * r - 2 * g
-        y = 1.5 * r + g - 1.5 * b
-        alpha = np.std(x) / np.std(y)
-        signal = x - alpha * y
+        X = 3 * rgb[:, 0] - 2 * rgb[:, 1]
+        Y = 1.5 * rgb[:, 0] + rgb[:, 1] - 1.5 * rgb[:, 2]
 
-        return signal
+        X /= np.std(X) + 1e-6
+        Y /= np.std(Y) + 1e-6
+
+        return X - Y

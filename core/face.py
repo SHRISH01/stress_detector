@@ -47,5 +47,3 @@ class FaceLandmarkDetector:
 
         self.prev_landmarks = smooth_landmarks
         return smooth_landmarks.astype(int), (x1, y1, x2, y2)
-
-        # return landmarks, (x1, y1, x2, y2)
