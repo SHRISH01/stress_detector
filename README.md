@@ -89,7 +89,6 @@ Real-time systems have to balance two competing goals: **accuracy and speed**. H
 
 **Event-Loop Architecture**
 - Everything runs in a controlled, non-blocking event loop
-- Video capture and processing use Qt timers to avoid freezing the UI
 - Graph updates are throttled to 1 Hz instead of updating every single frame
 
 **Decoupled Rendering**
@@ -102,10 +101,6 @@ Real-time systems have to balance two competing goals: **accuracy and speed**. H
 - But for now, I kept everything single-threaded to make debugging easier
 - On modern hardware, the current design already runs smoothly at 30 FPS with ~5-10% CPU usage
 
-**Signal Processing Trade-offs**
-- Bandpass filter range: 0.7–3.0 Hz (42–180 BPM)
-- Rolling 60-second buffer for HRV calculation
-- Short windows balance responsiveness with noise suppression
 
 ---
 
