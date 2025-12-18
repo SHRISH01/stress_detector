@@ -8,6 +8,7 @@ from core.video_source import VideoSource
 from core.face import FaceLandmarkDetector
 from core.roi import ROIExtractor
 from rppg.green import GreenRPPG
+from rppg.chrom import ChromRPPG
 
 
 VIDEO_PATH = "/Users/shrish/Desktop/stress_detector/eval_data/vid.avi"
@@ -26,13 +27,19 @@ def bandpass(sig, fs, low=0.7, high=3.0, order=3):
     return filtfilt(b, a, sig)
 
 
-def extract_rppg(video_path):
+def extract_rppg(video_path, method="green"):
     vs = VideoSource(video_path)
     vs.open()
 
     face = FaceLandmarkDetector()
     roi = ROIExtractor()
-    rppg = GreenRPPG(FPS_RPPG)
+
+    if method == "green":
+        rppg = GreenRPPG(FPS_RPPG)
+    elif method == "chrom":
+        rppg = ChromRPPG(FPS_RPPG)
+    else:
+        raise ValueError("Unknown rPPG method")
 
     signal = []
 
@@ -63,7 +70,7 @@ def compute_hr(signal, fs):
 
 
 def main():
-    print("\n=== rPPG One-Click Evaluation ===\n")
+    print("\n=== rPPG Evaluation ===\n")
 
     # ---------- LOAD VIDEO ----------
     cap = cv2.VideoCapture(VIDEO_PATH)
